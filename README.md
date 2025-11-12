@@ -1,58 +1,28 @@
 # mop
-Manage and organise projects. CLI tool for collaborative projects.
 
-Currently in design phase.
+Manage and organise projects. CLI tool that allows a team to plan, organise and manage work remotely. Users can create projects, designate goals and divide them into tasks. Different team members can be assigned to tasks, provide feedback into their work and update their status. mop also works with blocks in mind. A task can block another, meaning that until one task is not finished, the other cannot be done.
 
-# Introduction
+Another core feature of mop is its privilege system, where users can only perform actions that are allowed to do. Privileges types varies from viewing to working and some others. They are also hierarchical, meaning that privileges are passed down from projects to goals and from goals to tasks. This allows mop workflow to adapt to different team organisations. For further details check our [Documentation](doc/GENERAL.md).
 
-mop needs a machine to be hosted, where all the information will be stored. It can be local (for individual projects, preferably) or in a server that will listen permanently and work through a daemon.
+mop is **currently in development**, which means that everything previously stated is subjected to be implemented and changed.
 
-It all starts with an **instance** created in the host machine.
+# Technical details
 
-```
-mop init name_of_instance
-```
+This piece of software is meant to be a project for personal use and learning purposes. Also, the goal is to create a piece of software that is well designed, documented and efficient. For all these reasons, the project will be entirely made in C and will require as minimum dependencies as possible.
 
-Once initiated, the owner of the instance becomes the administrator. An instance can host one or several **projects**. Each project can set **goals** and each goals can be divided in **tasks**. It is up to the users to define the complexity and granularity of goals and tasks.
+# Roadmap
 
-Every goal and task has a **status** associated with it. The next status come predefined:
+In order to plan the development, we are expecting to bring features iteratively in each version, which we describe below.
 
-- **planned**: Initial status. It is planned to be made in the future.
-- **working**: The team started working on it.
-- **blocked**: Cannot continue due to another task/goal blocking its progress.
-- **approving**: It is awaiting for approval.
-- **achieved**: Goal has been approved and therefore achieved.
+## V0.1
 
-Also, goals and tasks can have **tags** to classify them. These are useful for privileges purposes (see [Users](#Users)).
+First prototype of the software. Can initialize an instance and work locally with it. Can create projects, goals and tasks. Can modify their status and tags. Can set task as block for another.
 
-As in every project, **blocks** are a part of mop workflow. We can define **requires** as every goal or task that must be done in order to be able to work in a specific goal/task. If every achievable task in a goal has been achieved and there are only blocked tasks left, goal is set automatically as blocked.
+## V0.2
 
-# Users
+Remote features. Instance can be accessed from other machines/network. Users can join the instance and interact with it remotely.
 
-Any user can join an instance using the **join** command:
+## V0.3
 
-```
-mop join username@host_ip:name_of_instance
-```
+Privileges system. Every user can be granted different types of privileges and their actions are restricted based on those they have.
 
-A request will be send to the administrators of the instance who will accept or decline the join request. If they accept, administrator can also grant certain **privileges** to the user. All privileges that can be granted are listed below:
-
-- **view**: Able to view all info and progress.
-- **plan**: Can create goals or tasks. Can set tags.
-- **work**: Can be assigned to goals or tasks to work on them.
-- **approve**: Can approve goals or tasks.
-- **grant**: Can grant privileges to another user
-
-Privileges are **hierarchical**. A user with certain privileges on an instance will have the same on all of its goals and tasks. A user with privileges on a goal will also have privileges on all its tasks. Tasks are the lowest level in the hierarchy. The **grant** privilege works hierarchically too, so a user can only grant privileges at a lower level than theirs.
-
-Privileges are also **tag based**. We can define privileges of a user based only on certain tags. For example, we can define the tag _development_ and apply it to several projects. Then, we can set set a user's privilege based on tag _development_, so that he only have those privileges on projects tagged as _development_. Same can be apply to any level on the hierarchy.
-
-```
-mop grant [USERNAME] [PRIVILEGE] [SCOPE]
-```
-
-The **scope** of a privilege tells the level in the hierarchy and its potential tags. An example of a grant command that gives privileges to a user named '_Bob_' in an instance named 'Foo' to work on every project tagged as _development_ or _testing_:
-
-```
-mop grant Bob work Foo.[development|testing]
-```
